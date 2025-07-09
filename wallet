@@ -1,0 +1,176 @@
+function wallet_dashboard_shortcode() {
+    if (!is_user_logged_in()) {
+        return wp_login_form(['echo' => false]);
+    }
+
+    $current_user = wp_get_current_user();
+
+    ob_start();
+    ?>
+    <style>
+    .header-decor {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      padding: 60px 20px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 0 40px 40px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .header-decor::before,
+    .header-decor::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: 0;
+    }
+    .header-decor::before {
+      width: 150px;
+      height: 150px;
+      background: rgba(255,255,255,0.15);
+      top: 20px;
+      left: -50px;
+    }
+    .header-decor::after {
+      width: 200px;
+      height: 200px;
+      background: rgba(255,255,255,0.1);
+      bottom: -70px;
+      right: -70px;
+      filter: blur(80px);
+    }
+    .header-decor h1 {
+      position: relative;
+      z-index: 1;
+      font-weight: 900;
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    .user-info {
+      position: relative;
+      z-index: 1;
+      font-weight: 500;
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    .wallet-wrapper {
+      max-width: 900px;
+      margin: 40px auto 80px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #1e293b;
+    }
+    .balances {
+      display: flex;
+      gap: 25px;
+      justify-content: center;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+    .balance-card {
+      flex: 1;
+      min-width: 250px;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      border-radius: 20px;
+      padding: 30px 20px;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
+      text-align: center;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+    .balance-card:hover {
+      transform: translateY(-8px);
+    }
+    .balance-card .icon {
+      font-size: 40px;
+      opacity: 0.22;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+    }
+    .balance-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+    .balance-amount {
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+    .section {
+      margin-bottom: 60px;
+    }
+    .section h3 {
+      color: #2563eb;
+      font-weight: 700;
+      margin-bottom: 25px;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 10px;
+    }
+    .mycred-send {
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+    .mycred-history {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+    @media (max-width: 800px) {
+      .balances {
+        flex-direction: column;
+      }
+    }
+    </style>
+
+    <div class="header-decor">
+      <h1>Welcome to Your Wallet</h1>
+      <div class="user-info">
+        Username: <?php echo esc_html($current_user->user_login); ?> | 
+        Email: <?php echo esc_html($current_user->user_email); ?> | 
+        User ID: <?php echo esc_html($current_user->ID); ?>
+      </div>
+    </div>
+
+    <div class="wallet-wrapper">
+      <div class="balances">
+        <div class="balance-card">
+          <div class="icon">&#x1f4b5;</div>
+          <h3>USD Coin Balance</h3>
+          <div class="balance-amount"><?php echo do_shortcode('[mycred_my_balance type="usd_coin"]'); ?></div>
+        </div>
+        <div class="balance-card">
+          <div class="icon">&#x1f4b7;</div>
+          <h3>GBP Coin Balance</h3>
+          <div class="balance-amount"><?php echo do_shortcode('[mycred_my_balance type="gbp_coin"]'); ?></div>
+        </div>
+        <div class="balance-card">
+          <div class="icon">&#x1f4b6;</div>
+          <h3>EUR Coin Balance</h3>
+          <div class="balance-amount"><?php echo do_shortcode('[mycred_my_balance type="eur_coin"]'); ?></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Send Coins to Another User</h3>
+        <div class="mycred-send"><?php echo do_shortcode('[mycred_send type="usd_coin"]'); ?></div>
+        <div class="mycred-send"><?php echo do_shortcode('[mycred_send type="gbp_coin"]'); ?></div>
+        <div class="mycred-send"><?php echo do_shortcode('[mycred_send type="eur_coin"]'); ?></div>
+      </div>
+
+      <div class="section">
+        <h3>Send Coins to My Bank (Demo)</h3>
+        <p><em>Bank withdrawal form coming soon!</em></p>
+      </div>
+
+      <div class="section mycred-history">
+        <h3>Your Transaction History</h3>
+        <?php echo do_shortcode('[mycred_history types="usd_coin,gbp_coin,eur_coin"]'); ?>
+      </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('wallet_dashboard', 'wallet_dashboard_shortcode');
